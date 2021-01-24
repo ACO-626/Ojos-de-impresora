@@ -28,15 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOjosImpresora));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
-            this.pictureBox5 = new System.Windows.Forms.PictureBox();
-            this.pictureBox6 = new System.Windows.Forms.PictureBox();
-            this.pictureBox7 = new System.Windows.Forms.PictureBox();
-            this.pictureBox8 = new System.Windows.Forms.PictureBox();
-            this.pictureBox9 = new System.Windows.Forms.PictureBox();
+            this.btnCam = new System.Windows.Forms.PictureBox();
+            this.btnArd = new System.Windows.Forms.PictureBox();
+            this.btnExt = new System.Windows.Forms.PictureBox();
+            this.btnVer = new System.Windows.Forms.PictureBox();
+            this.btnStatics = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.archivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nuevoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,15 +56,16 @@
             this.contactoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.correosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.créditosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.páginaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnCam)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnArd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnExt)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnVer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnStatics)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -111,60 +113,70 @@
             this.pictureBox4.TabIndex = 3;
             this.pictureBox4.TabStop = false;
             // 
-            // pictureBox5
+            // btnCam
             // 
-            this.pictureBox5.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.pictureBox5.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox5.Location = new System.Drawing.Point(35, 85);
-            this.pictureBox5.Name = "pictureBox5";
-            this.pictureBox5.Size = new System.Drawing.Size(73, 67);
-            this.pictureBox5.TabIndex = 4;
-            this.pictureBox5.TabStop = false;
+            this.btnCam.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnCam.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnCam.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCam.Image = ((System.Drawing.Image)(resources.GetObject("btnCam.Image")));
+            this.btnCam.Location = new System.Drawing.Point(35, 85);
+            this.btnCam.Name = "btnCam";
+            this.btnCam.Size = new System.Drawing.Size(73, 67);
+            this.btnCam.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnCam.TabIndex = 4;
+            this.btnCam.TabStop = false;
             // 
-            // pictureBox6
+            // btnArd
             // 
-            this.pictureBox6.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.pictureBox6.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox6.Location = new System.Drawing.Point(35, 208);
-            this.pictureBox6.Name = "pictureBox6";
-            this.pictureBox6.Size = new System.Drawing.Size(73, 67);
-            this.pictureBox6.TabIndex = 5;
-            this.pictureBox6.TabStop = false;
+            this.btnArd.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnArd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnArd.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnArd.Image = ((System.Drawing.Image)(resources.GetObject("btnArd.Image")));
+            this.btnArd.Location = new System.Drawing.Point(35, 208);
+            this.btnArd.Name = "btnArd";
+            this.btnArd.Size = new System.Drawing.Size(73, 67);
+            this.btnArd.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnArd.TabIndex = 5;
+            this.btnArd.TabStop = false;
             // 
-            // pictureBox7
+            // btnExt
             // 
-            this.pictureBox7.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.pictureBox7.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox7.Location = new System.Drawing.Point(35, 328);
-            this.pictureBox7.Name = "pictureBox7";
-            this.pictureBox7.Size = new System.Drawing.Size(73, 67);
-            this.pictureBox7.TabIndex = 6;
-            this.pictureBox7.TabStop = false;
+            this.btnExt.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnExt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnExt.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnExt.Image = ((System.Drawing.Image)(resources.GetObject("btnExt.Image")));
+            this.btnExt.Location = new System.Drawing.Point(35, 328);
+            this.btnExt.Name = "btnExt";
+            this.btnExt.Size = new System.Drawing.Size(73, 67);
+            this.btnExt.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnExt.TabIndex = 6;
+            this.btnExt.TabStop = false;
             // 
-            // pictureBox8
+            // btnVer
             // 
-            this.pictureBox8.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.pictureBox8.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox8.Location = new System.Drawing.Point(35, 456);
-            this.pictureBox8.Name = "pictureBox8";
-            this.pictureBox8.Size = new System.Drawing.Size(73, 67);
-            this.pictureBox8.TabIndex = 7;
-            this.pictureBox8.TabStop = false;
+            this.btnVer.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnVer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnVer.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnVer.Image = ((System.Drawing.Image)(resources.GetObject("btnVer.Image")));
+            this.btnVer.Location = new System.Drawing.Point(35, 456);
+            this.btnVer.Name = "btnVer";
+            this.btnVer.Size = new System.Drawing.Size(73, 67);
+            this.btnVer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnVer.TabIndex = 7;
+            this.btnVer.TabStop = false;
             // 
-            // pictureBox9
+            // btnStatics
             // 
-            this.pictureBox9.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.pictureBox9.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox9.Location = new System.Drawing.Point(35, 587);
-            this.pictureBox9.Name = "pictureBox9";
-            this.pictureBox9.Size = new System.Drawing.Size(73, 67);
-            this.pictureBox9.TabIndex = 8;
-            this.pictureBox9.TabStop = false;
+            this.btnStatics.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnStatics.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnStatics.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnStatics.Image = ((System.Drawing.Image)(resources.GetObject("btnStatics.Image")));
+            this.btnStatics.Location = new System.Drawing.Point(35, 587);
+            this.btnStatics.Name = "btnStatics";
+            this.btnStatics.Size = new System.Drawing.Size(73, 67);
+            this.btnStatics.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnStatics.TabIndex = 8;
+            this.btnStatics.TabStop = false;
             // 
             // menuStrip1
             // 
@@ -195,30 +207,30 @@
             // nuevoToolStripMenuItem
             // 
             this.nuevoToolStripMenuItem.Name = "nuevoToolStripMenuItem";
-            this.nuevoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nuevoToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.nuevoToolStripMenuItem.Text = "Nuevo";
             // 
             // reiniciarToolStripMenuItem
             // 
             this.reiniciarToolStripMenuItem.Name = "reiniciarToolStripMenuItem";
-            this.reiniciarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.reiniciarToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.reiniciarToolStripMenuItem.Text = "Reiniciar";
             // 
             // guardarComoToolStripMenuItem
             // 
             this.guardarComoToolStripMenuItem.Name = "guardarComoToolStripMenuItem";
-            this.guardarComoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guardarComoToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.guardarComoToolStripMenuItem.Text = "Guardar como";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(147, 6);
             // 
             // salirToolStripMenuItem
             // 
             this.salirToolStripMenuItem.Name = "salirToolStripMenuItem";
-            this.salirToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.salirToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.salirToolStripMenuItem.Text = "Salir";
             // 
             // videoToolStripMenuItem
@@ -267,19 +279,20 @@
             // cOMToolStripMenuItem
             // 
             this.cOMToolStripMenuItem.Name = "cOMToolStripMenuItem";
-            this.cOMToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cOMToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.cOMToolStripMenuItem.Text = "COM";
             // 
             // pINGToolStripMenuItem
             // 
             this.pINGToolStripMenuItem.Name = "pINGToolStripMenuItem";
-            this.pINGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pINGToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.pINGToolStripMenuItem.Text = "PING";
             // 
             // contactoToolStripMenuItem
             // 
             this.contactoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.correosToolStripMenuItem,
+            this.páginaToolStripMenuItem,
             this.créditosToolStripMenuItem});
             this.contactoToolStripMenuItem.Name = "contactoToolStripMenuItem";
             this.contactoToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
@@ -297,17 +310,23 @@
             this.créditosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.créditosToolStripMenuItem.Text = "Créditos";
             // 
+            // páginaToolStripMenuItem
+            // 
+            this.páginaToolStripMenuItem.Name = "páginaToolStripMenuItem";
+            this.páginaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.páginaToolStripMenuItem.Text = "Página";
+            // 
             // FormOjosImpresora
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(15)))), ((int)(((byte)(18)))));
             this.ClientSize = new System.Drawing.Size(1417, 741);
-            this.Controls.Add(this.pictureBox9);
-            this.Controls.Add(this.pictureBox8);
-            this.Controls.Add(this.pictureBox7);
-            this.Controls.Add(this.pictureBox6);
-            this.Controls.Add(this.pictureBox5);
+            this.Controls.Add(this.btnStatics);
+            this.Controls.Add(this.btnVer);
+            this.Controls.Add(this.btnExt);
+            this.Controls.Add(this.btnArd);
+            this.Controls.Add(this.btnCam);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
@@ -322,11 +341,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnCam)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnArd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnExt)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnVer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnStatics)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -340,11 +359,11 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.PictureBox pictureBox4;
-        private System.Windows.Forms.PictureBox pictureBox5;
-        private System.Windows.Forms.PictureBox pictureBox6;
-        private System.Windows.Forms.PictureBox pictureBox7;
-        private System.Windows.Forms.PictureBox pictureBox8;
-        private System.Windows.Forms.PictureBox pictureBox9;
+        private System.Windows.Forms.PictureBox btnCam;
+        private System.Windows.Forms.PictureBox btnArd;
+        private System.Windows.Forms.PictureBox btnExt;
+        private System.Windows.Forms.PictureBox btnVer;
+        private System.Windows.Forms.PictureBox btnStatics;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem archivoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nuevoToolStripMenuItem;
@@ -363,6 +382,7 @@
         private System.Windows.Forms.ToolStripMenuItem contactoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem correosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem créditosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem páginaToolStripMenuItem;
     }
 }
 
