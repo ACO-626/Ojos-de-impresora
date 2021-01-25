@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOjosImpresora));
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureVideo = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
@@ -55,9 +55,9 @@
             this.pINGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contactoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.correosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.créditosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.páginaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.créditosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureVideo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
@@ -69,22 +69,22 @@
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // pictureVideo
             // 
-            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox1.Location = new System.Drawing.Point(149, 85);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(909, 569);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.pictureVideo.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.pictureVideo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureVideo.Location = new System.Drawing.Point(195, 85);
+            this.pictureVideo.Name = "pictureVideo";
+            this.pictureVideo.Size = new System.Drawing.Size(765, 569);
+            this.pictureVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureVideo.TabIndex = 0;
+            this.pictureVideo.TabStop = false;
             // 
             // pictureBox2
             // 
             this.pictureBox2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox2.Location = new System.Drawing.Point(1104, 85);
+            this.pictureBox2.Location = new System.Drawing.Point(1054, 85);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(260, 162);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -95,7 +95,7 @@
             // 
             this.pictureBox3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.pictureBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox3.Location = new System.Drawing.Point(1104, 288);
+            this.pictureBox3.Location = new System.Drawing.Point(1054, 288);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(260, 162);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -106,7 +106,7 @@
             // 
             this.pictureBox4.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.pictureBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pictureBox4.Location = new System.Drawing.Point(1104, 491);
+            this.pictureBox4.Location = new System.Drawing.Point(1054, 491);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(260, 162);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -125,6 +125,7 @@
             this.btnCam.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.btnCam.TabIndex = 4;
             this.btnCam.TabStop = false;
+            this.btnCam.Click += new System.EventHandler(this.btnCam_Click);
             // 
             // btnArd
             // 
@@ -138,6 +139,7 @@
             this.btnArd.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.btnArd.TabIndex = 5;
             this.btnArd.TabStop = false;
+            this.btnArd.Click += new System.EventHandler(this.btnArd_Click);
             // 
             // btnExt
             // 
@@ -301,20 +303,20 @@
             // correosToolStripMenuItem
             // 
             this.correosToolStripMenuItem.Name = "correosToolStripMenuItem";
-            this.correosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.correosToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.correosToolStripMenuItem.Text = "Correos";
-            // 
-            // créditosToolStripMenuItem
-            // 
-            this.créditosToolStripMenuItem.Name = "créditosToolStripMenuItem";
-            this.créditosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.créditosToolStripMenuItem.Text = "Créditos";
             // 
             // páginaToolStripMenuItem
             // 
             this.páginaToolStripMenuItem.Name = "páginaToolStripMenuItem";
-            this.páginaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.páginaToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.páginaToolStripMenuItem.Text = "Página";
+            // 
+            // créditosToolStripMenuItem
+            // 
+            this.créditosToolStripMenuItem.Name = "créditosToolStripMenuItem";
+            this.créditosToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.créditosToolStripMenuItem.Text = "Créditos";
             // 
             // FormOjosImpresora
             // 
@@ -327,17 +329,17 @@
             this.Controls.Add(this.btnExt);
             this.Controls.Add(this.btnArd);
             this.Controls.Add(this.btnCam);
-            this.Controls.Add(this.pictureBox4);
-            this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.pictureVideo);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.pictureBox3);
+            this.Controls.Add(this.pictureBox4);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormOjosImpresora";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ojos de impresora";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureVideo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
@@ -355,7 +357,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureVideo;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.PictureBox pictureBox4;
