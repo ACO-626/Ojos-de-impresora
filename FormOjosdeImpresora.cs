@@ -22,11 +22,11 @@ namespace Ojos_de_impresora
     {
         #region Globales
         //Camara
-        VideoCapture video;       
+        VideoCapture video;
         private int indexCamara = 100;
         bool pausa = false;
         public int IndexCamara { get => indexCamara; set => indexCamara = value; }
-       
+
 
 
         //ModoConexión Arduino
@@ -37,8 +37,9 @@ namespace Ojos_de_impresora
         //Seleccionar Extrusor
         Rectangle rect;
         Point StartROI;
-        bool Escogiendo;
+        bool cortando=false;
         bool MouseDown;
+        Image<Bgr, byte> extrusor;
 
         #endregion
 
@@ -71,23 +72,22 @@ namespace Ojos_de_impresora
         {
             video = new VideoCapture(IndexCamara);
             pausa = false;
-            while(!pausa)
+            while (!pausa)
             {
                 Mat mframe = new Mat();
                 video.Read(mframe);
                 video.Grab();
-                if(!mframe.IsEmpty)
+                if (!mframe.IsEmpty)
                 {
                     pictureVideo.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
-                    pictureBox2.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
                     pictureBox3.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
                     pictureBox4.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
                     await Task.Delay(1000 / 60);
-                }else
+                } else
                 {
                     break;
                 }
-                
+
             }
         }
         #endregion
@@ -117,12 +117,94 @@ namespace Ojos_de_impresora
         #region Seleccionar Extrusor
         private void btnExt_Click(object sender, EventArgs e)
         {
-            
-            video.Dispose();
-            pausa = true;
+            if (pictureVideo.Image != null)
+            {
 
+                
+                MessageBox.Show("Siga las instrucciones para indicar el cabezal de extrusión", "Indicar el cabezal", MessageBoxButtons.OK);
+                lbMensaje.Text = "Encierra el HotEnd de tu impresora haciendo click y arrastrando sobre la imagen:";
+                lbMensaje.Visible = true;
+                
+                pictureVideo.Image = new Image<Bgr, byte>(new Bitmap(pictureVideo.Image)).Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear).ToBitmap();                
+                video.Dispose();
+                pausa = true;
+                
+                cortando = true;
+
+            }
+            else
+            {
+                MessageBox.Show("Debe tener una cámara activa o video", "Sin imagen", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             
         }
-#endregion
+        private void pictureVideo_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (cortando)
+            {
+                MouseDown = true;
+                StartROI = e.Location;
+            }
+        }
+
+        private void pictureVideo_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (cortando)
+            {
+                int width = Math.Max(StartROI.X, e.X) - Math.Min(StartROI.X, e.X);
+                int Height = Math.Max(StartROI.Y, e.Y) - Math.Min(StartROI.Y, e.Y);
+                rect = new Rectangle(Math.Min(StartROI.X, e.X), Math.Min(StartROI.Y, e.Y), width, Height);
+                Refresh();
+            }
+        }
+
+        private void pictureVideo_Paint(object sender, PaintEventArgs e)
+        {
+            if (MouseDown)
+            {
+                using (Pen pen = new Pen(Color.Red))
+                {
+                    pen.Width = 3;
+                    e.Graphics.DrawRectangle(pen, rect);
+                }
+            }
+        }
+
+        private void pictureVideo_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (cortando)
+            {
+                cortando = false;
+                MouseDown = false;
+                ObtenerExtrusor();
+
+            }
+
+
+        }
+
+        private void ObtenerExtrusor()
+        {
+            if (rect != Rectangle.Empty)
+            {
+                var img = new Image<Bgr, byte>(new Bitmap(pictureVideo.Image));
+                img.Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear);
+                img.ROI = rect;
+                var imgROI = img.Copy();
+                img.ROI = Rectangle.Empty;
+                pictureExtrusor.Image = imgROI.ToBitmap();
+                MostrarCamara();
+                extrusor = new Image<Bgr, byte>(imgROI.ToBitmap());
+                lbMensaje.Visible = false;
+            }
+            else
+            {
+                MessageBox.Show("Debe seleccionar un área válida para el extrusor, volver a intentar", "Extrusor no encontrado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        #endregion
+
+
+
     }
 }
