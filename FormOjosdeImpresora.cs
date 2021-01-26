@@ -26,7 +26,7 @@ namespace Ojos_de_impresora
         private int indexCamara = 100;
         bool pausa = false;
         public int IndexCamara { get => indexCamara; set => indexCamara = value; }
-
+        Mat mframe;
 
 
         //ModoConexión Arduino
@@ -40,6 +40,11 @@ namespace Ojos_de_impresora
         bool cortando=false;
         bool MouseDown;
         Image<Bgr, byte> extrusor;
+        Image<Bgr, byte> extrusorAux;
+        bool hotend;
+
+        //MatchHotend
+        bool matching = false;
 
         #endregion
 
@@ -74,15 +79,24 @@ namespace Ojos_de_impresora
             pausa = false;
             while (!pausa)
             {
-                Mat mframe = new Mat();
+                mframe = new Mat();
                 video.Read(mframe);
                 video.Grab();
                 if (!mframe.IsEmpty)
                 {
-                    pictureVideo.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
-                    pictureBox3.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
-                    pictureBox4.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
-                    await Task.Delay(1000 / 60);
+                    if(hotend && matching)
+                    {
+                        MatchHotend();
+                        await Task.Delay(1000 / 60);
+                    }
+                    else
+                    {
+                        pictureVideo.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
+                        pictureBox3.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
+                        pictureBox4.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
+                        await Task.Delay(1000 / 60);
+                    }
+                    
                 } else
                 {
                     break;
@@ -192,19 +206,58 @@ namespace Ojos_de_impresora
                 img.ROI = rect;
                 var imgROI = img.Copy();
                 img.ROI = Rectangle.Empty;
-                pictureExtrusor.Image = imgROI.ToBitmap();
+                
                 MostrarCamara();
                 extrusor = new Image<Bgr, byte>(imgROI.ToBitmap());
+                extrusorAux = extrusor;
                 lbMensaje.Visible = false;
+                hotend = true;
+                pictureExtrusor.Image = extrusor.ToBitmap();
             }
             else
             {
                 MessageBox.Show("Debe seleccionar un área válida para el extrusor, volver a intentar", "Extrusor no encontrado", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
         #endregion
 
+        private void btnVer_Click(object sender, EventArgs e)
+        {
+            if(hotend ==true)
+            {
+                matching = true;
+            }else
+            {
+                MessageBox.Show("Aun faltan configuraciones para porder ayudarte","Falta información",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            }
+        }
 
+
+        private void MatchHotend()
+        {
+            var imgScene = mframe.ToImage<Bgr,byte>();
+            imgScene.Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear);
+            var template = extrusor;
+            Mat imgOut = new Mat();
+            CvInvoke.MatchTemplate(imgScene, template, imgOut, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed);
+            double minVal = 0.0;
+            double maxVal = 0.0;
+            Point minLoc = new Point();
+            Point maxLoc = new Point();
+            CvInvoke.MinMaxLoc(imgOut, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+            Rectangle r = new Rectangle(minLoc, template.Size);
+            CvInvoke.Rectangle(imgScene, r, new MCvScalar(255, 0, 0), 3);
+            pictureVideo.Image = imgScene.ToBitmap();
+            pictureExtrusor.Image = extrusorAux.ToBitmap();
+            imgScene.ROI = r;            
+            extrusorAux = imgScene.Copy();
+            imgScene.ROI = Rectangle.Empty;
+        }
+
+
+       
 
     }
 }

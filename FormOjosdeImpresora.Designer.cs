@@ -176,6 +176,7 @@
             this.btnVer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.btnVer.TabIndex = 7;
             this.btnVer.TabStop = false;
+            this.btnVer.Click += new System.EventHandler(this.btnVer_Click);
             // 
             // btnStatics
             // 
