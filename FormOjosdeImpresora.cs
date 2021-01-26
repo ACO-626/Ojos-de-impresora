@@ -34,14 +34,19 @@ namespace Ojos_de_impresora
         public byte Puerto { get => puerto; set => puerto = value; }
 
 
+        //Seleccionar Extrusor
+        Rectangle rect;
+        Point StartROI;
+        bool Escogiendo;
+        bool MouseDown;
 
         #endregion
-
 
         #region Inicialización
         public FormOjosImpresora()
         {
             InitializeComponent();
+            rect = Rectangle.Empty;
             video = new VideoCapture(0);
         }
 
@@ -108,5 +113,16 @@ namespace Ojos_de_impresora
             ventanaModoArduino.Show();
         }
         #endregion
+
+        #region Seleccionar Extrusor
+        private void btnExt_Click(object sender, EventArgs e)
+        {
+            
+            video.Dispose();
+            pausa = true;
+
+            
+        }
+#endregion
     }
 }

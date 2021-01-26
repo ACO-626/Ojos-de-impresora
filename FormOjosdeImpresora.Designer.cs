@@ -153,6 +153,7 @@
             this.btnExt.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.btnExt.TabIndex = 6;
             this.btnExt.TabStop = false;
+            this.btnExt.Click += new System.EventHandler(this.btnExt_Click);
             // 
             // btnVer
             // 
