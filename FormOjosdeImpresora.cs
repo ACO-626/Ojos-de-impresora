@@ -39,6 +39,7 @@ namespace Ojos_de_impresora
 
         //Seleccionar Extrusor
         Rectangle rect;
+        Rectangle rect2;
         Point StartROI;
         bool cortando=false;
         bool MouseDown=false;
@@ -55,6 +56,15 @@ namespace Ojos_de_impresora
         //DetectarCama
         Image<Gray, byte> imgCama;
         Image<Gray, byte> imgCamaAux;
+
+        //DetectarCama2
+        bool cameando = false;
+        bool cortandoCama = false;
+        Image<Bgr, byte> realCama;
+        Image<Bgr, byte> realCamaAux;
+        bool cama;
+        Rectangle rCama;
+
         #endregion
 
         #region Inicialización
@@ -100,14 +110,15 @@ namespace Ojos_de_impresora
                         //FLANNMatcher();
                         //FBMatcher();
                         //FLANNMatcher();
-                        detectarCama();
-                        
-                        await Task.Delay(1000 / 60);
+                        //detectarCama();
+                        matchCama();
+                        pictureVideo.Image = imgScene.ToBitmap();
+                        await Task.Delay(1000 / 70);
                     }
                     else
                     {
                         pictureVideo.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
-                        pictureBox3.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
+                        //pictureCama.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
                         
                         await Task.Delay(1000 / 60);
                     }
@@ -174,6 +185,11 @@ namespace Ojos_de_impresora
                 MouseDown = true;
                 StartROI = e.Location;
             }
+            if(cortandoCama)
+            {
+                MouseDown = true;
+                StartROI = e.Location;
+            }
         }
 
         private void pictureVideo_MouseMove(object sender, MouseEventArgs e)
@@ -185,18 +201,34 @@ namespace Ojos_de_impresora
                 rect = new Rectangle(Math.Min(StartROI.X, e.X), Math.Min(StartROI.Y, e.Y), width, Height);
                 Refresh();
             }
+            if(cortandoCama)
+            {
+                int width = Math.Max(StartROI.X, e.X) - Math.Min(StartROI.X, e.X);
+                int Height = Math.Max(StartROI.Y, e.Y) - Math.Min(StartROI.Y, e.Y);
+                rect2 = new Rectangle(Math.Min(StartROI.X, e.X), Math.Min(StartROI.Y, e.Y), width, Height);
+                Refresh();
+            }
         }
 
         private void pictureVideo_Paint(object sender, PaintEventArgs e)
         {
-            if (MouseDown)
+            if (MouseDown && cortando)
             {
                 using (Pen pen = new Pen(Color.Red))
                 {
                     pen.Width = 3;
                     e.Graphics.DrawRectangle(pen, rect);
                 }
+            }else if(MouseDown && cortandoCama)
+            {
+                using (Pen pen = new Pen(Color.Red))
+                {
+                    pen.Width = 3;
+                    e.Graphics.DrawRectangle(pen, rect2);
+                }
             }
+            
+
         }
 
         private void pictureVideo_MouseUp(object sender, MouseEventArgs e)
@@ -208,7 +240,12 @@ namespace Ojos_de_impresora
                 ObtenerExtrusor();
 
             }
-
+            if(cortandoCama)
+            {
+                cortandoCama = false;
+                MouseDown = false;
+                ObtenerCama();
+            }
 
         }
 
@@ -252,26 +289,30 @@ namespace Ojos_de_impresora
             Point minLoc = new Point();
             Point maxLoc = new Point();
             CvInvoke.MinMaxLoc(imgOut, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
-            r = new Rectangle(minLoc, template.Size);
-            CvInvoke.Rectangle(imgScene, r, new Bgra(255, 168, 0, 0).MCvScalar, 2);           
-            CvInvoke.PutText(imgScene, "Carro", new Point(r.Left, r.Bottom-5), Emgu.CV.CvEnum.FontFace.HersheyPlain,0.95, new MCvScalar(255, 255, 255));
-
-      
-            pictureVideo.Image = imgScene.ToBitmap();
+            r = new Rectangle(minLoc, template.Size);            
+            
             pictureExtrusor.Image = extrusorAux.ToBitmap();
             imgScene.ROI = r;
             extrusorAux = imgScene.Copy();
             imgScene.ROI = Rectangle.Empty;
+            CvInvoke.Rectangle(imgScene, r, new Bgra(255, 168, 0, 0).MCvScalar, 2);
+            CvInvoke.PutText(imgScene, "Carro", new Point((r.Left+r.Right)/2, (r.Top+r.Bottom)/2), Emgu.CV.CvEnum.FontFace.HersheyPlain,0.95, new MCvScalar(255, 168, 0));
+
+      
+            //pictureVideo.Image = imgScene.ToBitmap();
+            
         }
         #endregion
 
         #region Ver
         private void btnVer_Click(object sender, EventArgs e)
         {
-            if(hotend ==true)
+            if(hotend ==true && cama==true)
             {
+
                 matching = true;
-            }else
+            }                           
+            else
             {
                 MessageBox.Show("Aun faltan configuraciones para porder ayudarte","Falta información",MessageBoxButtons.OK,MessageBoxIcon.Information);
             }
@@ -487,5 +528,85 @@ namespace Ojos_de_impresora
         }
         #endregion
 
+        #region detectar cama
+        private void btnCama_Click(object sender, EventArgs e)
+        {
+            if (pictureVideo.Image != null)
+            {
+
+                MessageBox.Show("Siga las instrucciones para indicar la cama caliente", "Indicar cama caliente", MessageBoxButtons.OK);
+                lbMensaje.Text = "Encierra la cama caliente de tu impresora haciendo click y arrastrando sobre la imagen";
+                lbMensaje.Visible = true;
+
+                pictureVideo.Image = new Image<Bgr, byte>(new Bitmap(pictureVideo.Image)).Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear).ToBitmap();
+                video.Dispose();
+                pausa = true;
+
+                cameando = true;
+                cortandoCama = true;
+
+            }
+            else
+            {
+                MessageBox.Show("Debe tener una cámara activa o video", "Sin imagen", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ObtenerCama()
+        {
+            if (rect2 != Rectangle.Empty)
+            {
+                var img = new Image<Bgr, byte>(new Bitmap(pictureVideo.Image));
+                //var img = mframe.ToImage<Bgr, byte>();
+                img.Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear);
+                img.ROI = rect2;
+                var imgROI = img.Copy();
+                img.ROI = Rectangle.Empty;
+
+                MostrarCamara();
+                realCama= new Image<Bgr, byte>(imgROI.ToBitmap());
+                realCamaAux = realCama;
+                lbMensaje.Visible = false;
+                cama = true;
+                pictureCama.Image = realCama.ToBitmap();
+            }
+            else
+            {
+                MessageBox.Show("Debe seleccionar un área válida para el extrusor, volver a intentar", "Extrusor no encontrado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void matchCama()
+        {
+            if(!hotend)
+            {
+                imgScene = mframe.ToImage<Bgr, byte>();
+                imgScene.Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear);
+            }
+            
+            var template = realCama;
+            Mat imgOut = new Mat();
+            CvInvoke.MatchTemplate(imgScene, template, imgOut, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed);
+            double minVal = 0.0;
+            double maxVal = 0.0;
+            Point minLoc = new Point();
+            Point maxLoc = new Point();
+            CvInvoke.MinMaxLoc(imgOut, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+            rCama = new Rectangle(minLoc, template.Size);
+
+            pictureCama.Image = realCamaAux.ToBitmap();
+            imgScene.ROI = rCama;
+            realCamaAux = imgScene.Copy();
+            imgScene.ROI = Rectangle.Empty;
+
+            CvInvoke.Rectangle(imgScene, rCama, new Bgra(0, 190, 0, 0).MCvScalar, 2);
+            CvInvoke.PutText(imgScene, "Contacto", new Point(r.Left+5, r.Bottom - 5), Emgu.CV.CvEnum.FontFace.HersheyPlain, 0.95, new MCvScalar(255, 255, 255));
+            CvInvoke.PutText(imgScene, "Cama", new Point(rCama.Left, rCama.Bottom - 5), Emgu.CV.CvEnum.FontFace.HersheyPlain, 0.95, new MCvScalar(0, 190, 0));
+
+            //pictureVideo.Image = imgScene.ToBitmap();
+            
+        }
+
+        #endregion
     }
 }
