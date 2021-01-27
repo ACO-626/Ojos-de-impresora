@@ -14,6 +14,9 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Management;
+using Emgu.CV.Util;
+using Emgu.CV.Features2D;
+using Emgu.CV.Flann;
 #endregion
 
 namespace Ojos_de_impresora
@@ -38,14 +41,20 @@ namespace Ojos_de_impresora
         Rectangle rect;
         Point StartROI;
         bool cortando=false;
-        bool MouseDown;
+        bool MouseDown=false;
         Image<Bgr, byte> extrusor;
         Image<Bgr, byte> extrusorAux;
         bool hotend;
+        
 
         //MatchHotend
         bool matching = false;
+        Image<Bgr, byte> imgScene;
+        Rectangle r;
 
+        //DetectarCama
+        Image<Gray, byte> imgCama;
+        Image<Gray, byte> imgCamaAux;
         #endregion
 
         #region Inicialización
@@ -87,13 +96,19 @@ namespace Ojos_de_impresora
                     if(hotend && matching)
                     {
                         MatchHotend();
+                        //FBMatcher();
+                        //FLANNMatcher();
+                        //FBMatcher();
+                        //FLANNMatcher();
+                        detectarCama();
+                        
                         await Task.Delay(1000 / 60);
                     }
                     else
                     {
                         pictureVideo.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
                         pictureBox3.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
-                        pictureBox4.Image = mframe.ToImage<Bgr, byte>().ToBitmap();
+                        
                         await Task.Delay(1000 / 60);
                     }
                     
@@ -223,6 +238,34 @@ namespace Ojos_de_impresora
 
         #endregion
 
+        #region Simple matchCabezal
+        //Detección de Cabezal por simple match
+        private void MatchHotend()
+        {
+            imgScene = mframe.ToImage<Bgr, byte>();
+            imgScene.Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear);
+            var template = extrusor;
+            Mat imgOut = new Mat();
+            CvInvoke.MatchTemplate(imgScene, template, imgOut, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed);
+            double minVal = 0.0;
+            double maxVal = 0.0;
+            Point minLoc = new Point();
+            Point maxLoc = new Point();
+            CvInvoke.MinMaxLoc(imgOut, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+            r = new Rectangle(minLoc, template.Size);
+            CvInvoke.Rectangle(imgScene, r, new Bgra(255, 168, 0, 0).MCvScalar, 2);           
+            CvInvoke.PutText(imgScene, "Carro", new Point(r.Left, r.Bottom-5), Emgu.CV.CvEnum.FontFace.HersheyPlain,0.95, new MCvScalar(255, 255, 255));
+
+      
+            pictureVideo.Image = imgScene.ToBitmap();
+            pictureExtrusor.Image = extrusorAux.ToBitmap();
+            imgScene.ROI = r;
+            extrusorAux = imgScene.Copy();
+            imgScene.ROI = Rectangle.Empty;
+        }
+        #endregion
+
+        #region Ver
         private void btnVer_Click(object sender, EventArgs e)
         {
             if(hotend ==true)
@@ -235,29 +278,214 @@ namespace Ojos_de_impresora
         }
 
 
-        private void MatchHotend()
+        #endregion
+
+        #region FBMatcher
+        private void FBMatcher()
         {
-            var imgScene = mframe.ToImage<Bgr,byte>();
-            imgScene.Resize(pictureVideo.Width, pictureVideo.Height, Emgu.CV.CvEnum.Inter.Linear);
-            var template = extrusor;
-            Mat imgOut = new Mat();
-            CvInvoke.MatchTemplate(imgScene, template, imgOut, Emgu.CV.CvEnum.TemplateMatchingType.SqdiffNormed);
-            double minVal = 0.0;
-            double maxVal = 0.0;
-            Point minLoc = new Point();
-            Point maxLoc = new Point();
-            CvInvoke.MinMaxLoc(imgOut, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
-            Rectangle r = new Rectangle(minLoc, template.Size);
-            CvInvoke.Rectangle(imgScene, r, new MCvScalar(255, 0, 0), 3);
-            pictureVideo.Image = imgScene.ToBitmap();
-            pictureExtrusor.Image = extrusorAux.ToBitmap();
-            imgScene.ROI = r;            
-            extrusorAux = imgScene.Copy();
-            imgScene.ROI = Rectangle.Empty;
+            try
+            {
+                var imgScene = mframe.ToImage<Bgr, byte>();
+                var template = extrusor;
+                var vp = PrcessImageFB(template,imgScene.Convert<Gray,byte>());
+                if(vp != null)
+                {
+                    CvInvoke.Polylines(imgScene, vp,true, new MCvScalar(255), 5);
+                }
+
+                pictureVideo.Image = imgScene.ToBitmap();
+
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+ 
+        }
+       private static VectorOfPoint PrcessImageFB(Image<Bgr,byte> template, Image<Gray,byte> sceneImage)
+        {
+            try
+            {
+                VectorOfPoint finalPonts = null;
+                Mat homography = null;
+                VectorOfKeyPoint templateKeyPoints = new VectorOfKeyPoint();
+                VectorOfKeyPoint sceneKeyPounts = new VectorOfKeyPoint();
+                Mat templateDescriptor = new Mat();
+                Mat sceneDescriptor = new Mat();
+                Mat mask = new Mat();
+                int k = 2;
+                double uniquenesthreshold = 0.80;
+                VectorOfVectorOfDMatch matches = new VectorOfVectorOfDMatch();
+
+                Brisk featureDetector = new Brisk();
+                featureDetector.DetectAndCompute(template, null, templateKeyPoints, templateDescriptor, false);
+                featureDetector.DetectAndCompute(sceneImage, null, sceneKeyPounts, sceneDescriptor, false);
+
+                BFMatcher matcher = new BFMatcher(DistanceType.Hamming);
+                matcher.Add(templateDescriptor);
+                matcher.KnnMatch(sceneDescriptor, matches, k, mask);
+                mask = new Mat(matches.Size, 1, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+                mask.SetTo(new MCvScalar(255));
+
+                Features2DToolbox.VoteForUniqueness(matches, uniquenesthreshold, mask);
+
+                int count = Features2DToolbox.VoteForSizeAndOrientation(templateKeyPoints, sceneKeyPounts, matches, mask, 1.5, 20);
+                if (count >= 4)
+                {
+                    homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(templateKeyPoints, sceneKeyPounts, matches, mask, 5);
+                }
+                if (homography != null)
+                {
+                    Rectangle rect = new Rectangle(Point.Empty, template.Size);
+                    PointF[] pts = new PointF[]
+                    {
+                    new PointF(rect.Left,rect.Bottom),
+                    new PointF(rect.Right,rect.Bottom),
+                    new PointF(rect.Right,rect.Top),
+                    new PointF(rect.Left,rect.Top)
+                    };
+                    pts = CvInvoke.PerspectiveTransform(pts, homography);
+                    Point[] points = Array.ConvertAll<PointF, Point>(pts, Point.Round);
+                    finalPonts = new VectorOfPoint(points);
+                }
+                
+                return finalPonts;
+            }
+            catch(Exception ex)
+            {
+                VectorOfPoint finalPonts = null;
+                return finalPonts;
+                throw new Exception(ex.Message);
+            }
+
+
+        }
+        #endregion
+
+        #region FlanMqatcher
+        private void FLANNMatcher()
+        {
+            
+            
+                var imgScene = mframe.ToImage<Bgr, byte>();
+                var template = extrusor;
+                var vp = PrcessImageFLann(template, imgScene.Convert<Gray, byte>());
+                if (vp != null)
+                {
+                    CvInvoke.Polylines(imgScene, vp, true, new MCvScalar(255), 5);
+                }
+
+                pictureVideo.Image = imgScene.ToBitmap();
+
+
         }
 
+        private static VectorOfPoint PrcessImageFLann(Image<Bgr, byte> template, Image<Gray, byte> sceneImage)
+        {
+            try
+            {
+                VectorOfPoint finalPonts = null;
+                Mat homography = null;
+                VectorOfKeyPoint templateKeyPoints = new VectorOfKeyPoint();
+                VectorOfKeyPoint sceneKeyPounts = new VectorOfKeyPoint();
+                Mat templateDescriptor = new Mat();
+                Mat sceneDescriptor = new Mat();
+                Mat mask = new Mat();
+                int k = 2;
+                double uniquenesthreshold = 0.80;
+                VectorOfVectorOfDMatch matches = new VectorOfVectorOfDMatch();
 
-       
+                KAZE featureDetector = new KAZE();
+                featureDetector.DetectAndCompute(template, null, templateKeyPoints, templateDescriptor, false);
+                featureDetector.DetectAndCompute(sceneImage, null, sceneKeyPounts, sceneDescriptor, false);
+
+                //Matching
+
+                KdTreeIndexParams ip = new KdTreeIndexParams();
+                //var ip = new AutotunedIndexParams();
+                //var ip = new LinearIndexParams();
+                SearchParams sp = new SearchParams();
+                FlannBasedMatcher matcher = new FlannBasedMatcher(ip,sp);
+
+                matcher.Add(templateDescriptor);
+                matcher.KnnMatch(sceneDescriptor, matches, k, mask);
+                mask = new Mat(matches.Size, 1, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+                mask.SetTo(new MCvScalar(255));
+
+                Features2DToolbox.VoteForUniqueness(matches, uniquenesthreshold, mask);
+
+                int count = Features2DToolbox.VoteForSizeAndOrientation(templateKeyPoints, sceneKeyPounts, matches, mask, 1.5, 20);
+                if (count >= 4)
+                {
+                    homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(templateKeyPoints, sceneKeyPounts, matches, mask, 5);
+                }
+                if (homography != null)
+                {
+                    Rectangle rect = new Rectangle(Point.Empty, template.Size);
+                    PointF[] pts = new PointF[]
+                    {
+                    new PointF(rect.Left,rect.Bottom),
+                    new PointF(rect.Right,rect.Bottom),
+                    new PointF(rect.Right,rect.Top),
+                    new PointF(rect.Left,rect.Top)
+                    };
+                    pts = CvInvoke.PerspectiveTransform(pts, homography);
+                    Point[] points = Array.ConvertAll<PointF, Point>(pts, Point.Round);
+                    finalPonts = new VectorOfPoint(points);
+                }
+                return finalPonts;
+            }
+            catch (Exception ex)
+            {
+                VectorOfPoint finalPonts = null;
+                return finalPonts;
+                throw new Exception(ex.Message);
+            }
+
+
+        }
+
+        #endregion
+
+        #region DetectarCama
+        private void detectarCama()
+        {
+            imgCama = imgScene.Convert<Gray, byte>();
+            imgCamaAux = new Image<Gray, byte>(imgCama.Width, imgCama.Height);
+            for (int i = 2*imgCama.Height/3; i < imgCama.Height; i++)
+            {
+                for (int j = 0; j < imgCama.Width; j++)
+                {
+                   
+                    
+                        imgCamaAux[i, j] = imgCama[i, j];
+                    
+                        
+                }
+            }
+            imgCama = imgCamaAux.Canny(40, 200);
+
+            pictureBox4.Image = imgCama.ToBitmap();
+            Emgu.CV.Util.VectorOfVectorOfPoint contours = new Emgu.CV.Util.VectorOfVectorOfPoint();
+            Mat mat = new Mat();
+            CvInvoke.FindContours(imgCama, contours, mat, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+
+            for (int i = 0; i < contours.Size; i++)
+            {
+                Rectangle cajaBlob = CvInvoke.BoundingRectangle(contours[i]);
+                var area = CvInvoke.ContourArea(contours[i]);
+                if (area > 1500 && !r.Contains(cajaBlob) && cajaBlob.Bottom>r.Bottom)
+                {
+                    CvInvoke.DrawContours(imgScene, contours, i, new MCvScalar(255, 200, 0), 3);
+                }
+
+            }
+            
+            pictureVideo.Image = imgScene.ToBitmap();
+
+
+
+        }
+        #endregion
 
     }
 }
